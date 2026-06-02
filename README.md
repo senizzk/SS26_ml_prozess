@@ -7,5 +7,3 @@ https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-ca
 https://www.kaggle.com/datasets/edumagalhaes/quality-prediction-in-a-mining-process
 
 https://www.kaggle.com/datasets/afrniomelo/tep-csv
-
-https://github.com/amazon-science/spot-diff
