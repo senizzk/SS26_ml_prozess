@@ -1,0 +1,16 @@
+[project]
+name = "ss26-ml-prozess"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "numpy>=2.4.6",
+    "pandas>=3.0.3",
+    "torch>=2.12.0",
+]
+
+
+[build-system]
+requires = ["uv_build>=0.11.19,<0.12"]
+build-backend = "uv_build"
