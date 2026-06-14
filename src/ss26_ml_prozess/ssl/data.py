@@ -82,8 +82,8 @@ class FlotationCSVDataset(Dataset[tuple[Tensor, Tensor]]):
     def __len__(self) -> int:
         return max(0, len(self.data) - self.window_size + 1)
 
-    def __getitem__(self, idx: int) -> tuple[Tensor, Tensor]:
-        window = self.data[idx : idx + self.window_size]
+    def __getitem__(self, index: int) -> tuple[Tensor, Tensor]:
+        window = self.data[index : index + self.window_size]
         ctx = window[: self.context_len]
         tgt = window[self.context_len :]
         return ctx, tgt

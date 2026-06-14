@@ -5,8 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "ipykernel>=7.3.0",
+    "jupyter>=1.1.1",
+    "marimo>=0.23.9",
     "numpy>=2.4.6",
     "pandas>=3.0.3",
+    "plotly>=6.8.0",
     "torch>=2.12.0",
 ]
 
@@ -14,3 +18,7 @@ dependencies = [
 [build-system]
 requires = ["uv_build>=0.11.19,<0.12"]
 build-backend = "uv_build"
+
+
+[tool.marimo.runtime]
+output_max_bytes = 100_000_000
