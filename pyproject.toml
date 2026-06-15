@@ -7,6 +7,7 @@ requires-python = ">=3.14"
 dependencies = [
     "ipykernel>=7.3.0",
     "jupyter>=1.1.1",
+    "lejepa",
     "marimo>=0.23.9",
     "numpy>=2.4.6",
     "pandas>=3.0.3",
@@ -22,3 +23,6 @@ build-backend = "uv_build"
 
 [tool.marimo.runtime]
 output_max_bytes = 100_000_000
+
+[tool.uv.sources]
+lejepa = { git = "https://github.com/galilai-group/lejepa" }
