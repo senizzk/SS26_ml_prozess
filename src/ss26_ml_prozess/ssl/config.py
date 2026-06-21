@@ -1,27 +1,32 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
 class LeJEPAConfig:
     # Data
     data_path: str = "data/MiningProcess_Flotation_Plant_Database.csv"
-    window_size: int = 60          # readings per window
-    context_ratio: float = 0.7     # fraction of window used as context
-    val_split: float = 0.1
+    window_size: int = 60  # readings per window
+    num_views: int = 2  # augmented views per sample
+    val_split: float = 0.1  # fraction of data for validation
+    context_ratio: float = 0.7  # fraction of window used as context
 
     # Encoder — processes each time step individually
-    encoder_dims: tuple = (64, 128)           # hidden dims; last is embedding dim
+    embedding_dim: int = 1024
+    encoder_dims: tuple = (64, embedding_dim)  # hidden dims; last is embedding dim
     encoder_act: str = "gelu"
 
     # Predictor — maps context embedding -> target embedding
-    predictor_dims: tuple = (128, 64, 64)     # hidden + output dim (must match encoder[-1])
+    predictor_dims: tuple = (
+        128,
+        embedding_dim,
+    )  # hidden dims; output dim must match encoder[-1]
     predictor_act: str = "gelu"
 
     # SSL loss (VICReg-style)
-    inv_weight: float = 1.0       # invariance (MSE)
-    var_weight: float = 1.0       # variance: push std -> gamma
-    cov_weight: float = 0.04      # covariance: decorrelate
-    var_gamma: float = 1.0        # target std for variance term
+    inv_weight: float = 1.0  # invariance (MSE)
+    var_weight: float = 1.0  # variance: push std -> gamma
+    cov_weight: float = 0.04  # covariance: decorrelate
+    var_gamma: float = 1.0  # target std for variance term
 
     # Training
     batch_size: int = 256

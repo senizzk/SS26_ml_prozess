@@ -220,3 +220,7 @@ __marimo__/
 
 data
 scratchpads
+
+test_results/
+probe_checkpoints/
+checkpoints/
