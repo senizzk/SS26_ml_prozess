@@ -41,18 +41,14 @@ def load_and_parse(filepath: str | Path, mode: str) -> pd.DataFrame:
         filepath,
         decimal=",",  # European decimal: "55,2" → 55.2
         thousands=None,  # no thousands separator
-        parse_dates=["date"],
-        dayfirst=False,
     )
-    df = df[df["date"] >= "2017-03-29 12:00:00"]
-    hourly_grouped_df: pd.DataFrame = df.groupby("date").mean()
     match mode:
         case "train":
-            split_point = int(len(hourly_grouped_df) * 0.75)
-            out = hourly_grouped_df.sort_index(ascending=True).iloc[:split_point]
+            split_point = int(len(df) * 0.75)
+            out: pd.DataFrame = df.sort_index(ascending=True).iloc[:split_point]
         case "test":
-            split_point = int(len(hourly_grouped_df) * 0.75)
-            out = hourly_grouped_df.sort_index(ascending=True).iloc[split_point:]
+            split_point = int(len(df) * 0.75)
+            out = df.sort_index(ascending=True).iloc[split_point:]
     return out
 
 
@@ -110,12 +106,13 @@ class LeJEPADataset(Dataset[tuple[Tensor, Tensor]]):
         self,
         filepath: str | Path,
         window_size: int = 60,
-        num_views: int = 2,
+        num_views: int = 8,
         aug_config: AugmentationConfig | None = None,
+        drop_columns=("NOX", "CO"),
     ) -> None:
         super().__init__()
         df = load_and_parse(filepath, mode="train")
-        self.feature_names = [c for c in df.columns if c != "date"]
+        self.feature_names = [c for c in df.columns if c not in drop_columns]
         self.num_features = len(self.feature_names)
         self.window_size = window_size
         self.num_views = num_views
@@ -162,10 +159,18 @@ class LeJEPADataset(Dataset[tuple[Tensor, Tensor]]):
 
     def _augment(self, x: Tensor) -> Tensor:
         """Compose all active augmentations in a fixed order."""
-        x = self._temporal_mask(x)
-        x = self._feature_mask(x)
-        x = self._add_noise(x)
-        x = self._random_scale(x)
+        if torch.rand(1).item() < 0.7:  # 70% chance to scale
+            x = self._random_scale(x)
+
+        if torch.rand(1).item() < 0.7:  # 70% chance to add noise
+            x = self._add_noise(x)
+
+        # 2. Destructive masking LAST
+        if torch.rand(1).item() < 0.5:  # 50% chance to temporally mask
+            x = self._temporal_mask(x)
+
+        if torch.rand(1).item() < 0.5:  # 50% chance to feature mask
+            x = self._feature_mask(x)
         return x
 
     def _temporal_mask(self, x: Tensor) -> Tensor:
